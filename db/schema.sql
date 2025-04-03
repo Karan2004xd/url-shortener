@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS urls (
     id INTEGER PRIMARY KEY,
-    short_url TEXT NOT NULL UNIQUE,
-    long_url TEXT NOT NULL,
+    short_url TEXT NOT NULL,
+    long_url TEXT NOT NULL UNIQUE,
     created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(id)
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS urls (
 
 CREATE TABLE IF NOT EXISTS custom_urls (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    url_id INTEGER,
+    name TEXT NOT NULL,
+    url_id INTEGER UNIQUE,
     FOREIGN KEY(url_id) REFERENCES urls(id)
 );

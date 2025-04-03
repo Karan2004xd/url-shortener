@@ -2,8 +2,8 @@ package api
 
 import (
 	"net/http"
+	"url-shortner/internal"
 	"url-shortner/models"
-	"url-shortner/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -64,7 +64,7 @@ func validateUser(context *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateToken(user.Email, user.Id)
+	token, err := internal.GenerateToken(user.Email, user.Id)
 
 	if err != nil {
 		context.JSON(

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 	"url-shortner/db"
-	"url-shortner/utils"
+	"url-shortner/internal"
 )
 
 type User struct {
@@ -23,7 +23,7 @@ func (user *User) Copy(other User) {
 }
 
 func (user *User) Create() error {
-	hashedPassword, err := utils.HashPassword(user.Password)
+	hashedPassword, err := internal.HashPassword(user.Password)
 
 	if err != nil {
 		return errors.New(fmt.Sprint("Error while encrypting the password.", err))
@@ -87,9 +87,11 @@ func (user *User) Validate() (error) {
 		return errors.New("Invalid Credentials")
 	}
 
-	if !utils.CheckHashedPassword(users[0].Password, user.Password) {
+	if !internal.CheckHashedPassword(users[0].Password, user.Password) {
 		return errors.New("Invalid Credentials")
 	}
+
+	user.Id = users[0].Id
 	return nil
 }
 
@@ -100,5 +102,10 @@ func GetAllUsers() ([]User, error) {
 		return []User {}, err
 	}
 
-	return createUserArrayFromRows(rows, false)
+	users, err := createUserArrayFromRows(rows, false)
+
+	if err != nil || len(users) == 0 {
+		return []User {}, err
+	}
+	return users, nil 
 }

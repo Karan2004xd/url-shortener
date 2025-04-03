@@ -1,15 +1,31 @@
 package db
 
-const InsertNewUser = `
+const (
+	InsertNewUser = `
 	INSERT INTO users (email, password)
 	VALUES (?, ?)
-`
+	`
 
-const SelectUserByEmailAndPassword = `
+	SelectUserByEmailAndPassword = `
 	SELECT * FROM users
 	WHERE email = ?
-`
+	`
 
-const SelectAllUsers = `
+	SelectAllUsers = `
 	SELECT * FROM users
-`
+	`
+
+	InsertNewUrl = `
+	INSERT INTO urls (id, short_url, long_url, user_id)
+	VALUES (?, ?, ?, ?)
+	`
+
+	SelectUrlByShortUrl = `
+	SELECT * FROM urls WHERE short_url = ?
+	`
+
+	InsertNewCustomUrl = `
+	INSERT INTO custom_urls (name, url_id)
+	VALUES (?, ?)
+	`
+)

@@ -4,9 +4,11 @@ import (
 	"os"
 )
 
-const AppName = "tinyurl"
-
-const DatabaseName = "tinyurl.db"
+const (
+	AppName = "tinyurl"
+	DatabaseName = "tinyurl.db"
+	BaseUrl = "http://localhost:8080/"
+)
 
 func GetRootDir() string {
 	return os.Getenv("ROOT_DIR")
