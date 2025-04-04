@@ -16,4 +16,6 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticated.Use(middlewares.Authenticate)
 
 	authenticated.POST("/url", generateShortUrl)
+	authenticated.PUT("/url/:short_url", updateUrl)
+	authenticated.GET("/url", getAllUrls)
 }

@@ -7,6 +7,7 @@ import (
 	"time"
 	"url-shortner/db"
 	"url-shortner/internal"
+	"url-shortner/utils"
 )
 
 type User struct {
@@ -16,10 +17,13 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func (user *User) Copy(other User) {
-	user.Id = other.Id
-	user.Email = other.Email
-	user.Password = other.Password
+func (user *User) Scan(rows *sql.Rows) error {
+	return rows.Scan(
+		&user.Id, &user.Email, &user.Password, &user.CreatedAt)
+}
+
+func (user *User) New() utils.RowScanner {
+	return &User{}
 }
 
 func (user *User) Create() error {
@@ -43,31 +47,6 @@ func (user *User) Create() error {
 	return nil
 }
 
-func createUserArrayFromRows(rows *sql.Rows, showPassword bool) ([]User, error) {
-	var users []User
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var user User
-		err := rows.Scan(
-			&user.Id, &user.Email,
-			&user.Password, &user.CreatedAt)
-
-		if err != nil {
-			return nil, err
-		}
-
-		if !showPassword {
-			user.Password = ""
-		}
-
-		users = append(users, user)
-	}
-
-	return users, nil
-}
-
 func (user *User) Validate() (error) {
 	rows, err := db.Select(
 		db.SelectUserByEmailAndPassword,
@@ -77,7 +56,7 @@ func (user *User) Validate() (error) {
 		return err
 	}
 
-	users, err := createUserArrayFromRows(rows, true)
+	users, err := utils.GetArrayFromRows[*User](rows)
 
 	if err != nil {
 		return err
@@ -95,17 +74,21 @@ func (user *User) Validate() (error) {
 	return nil
 }
 
-func GetAllUsers() ([]User, error) {
+func GetAllUsers() ([]*User, error) {
 	rows, err := db.Select(db.SelectAllUsers)
 
 	if err != nil {
-		return []User {}, err
+		return []*User {}, err
 	}
 
-	users, err := createUserArrayFromRows(rows, false)
+	users, err := utils.GetArrayFromRows[*User](rows)
+
+	for index := range (len(users)) {
+		users[index].Password = ""
+	}
 
 	if err != nil || len(users) == 0 {
-		return []User {}, err
+		return []*User {}, err
 	}
 	return users, nil 
 }

@@ -39,9 +39,9 @@ func generateShortUrl(context *gin.Context) {
 }
 
 func getLongUrl(context *gin.Context) {
-	short_url := context.Param("short_url")
+	shortUrl := context.Param("short_url")
 
-	url, err := models.GetLongUrl(short_url)
+	url, err := models.GetLongUrl(shortUrl)
 
 	if url == nil {
 		context.JSON(
@@ -60,4 +60,54 @@ func getLongUrl(context *gin.Context) {
 	}
 
 	context.Redirect(301, url.LongUrl)
+}
+
+func updateUrl(context *gin.Context) {
+	userId := context.GetInt64("user_id")
+	shortUrl := context.Param("short_url")
+
+	var url models.Url
+	err := context.ShouldBindJSON(&url)
+
+	if err != nil {
+		context.JSON(
+			http.StatusBadRequest, gin.H{
+				"message": "Could not parse the request",
+				"error": err.Error(),
+			})
+		return
+	}
+
+	url.UserId = userId
+	err = url.UpdateUrl(shortUrl)
+
+	if err != nil {
+		context.JSON(
+			http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "URL Updated successfully",
+	})
+}
+
+func getAllUrls(context *gin.Context) {
+	userId := context.GetInt64("user_id")
+
+	urls, err := models.GetAllCustomUrls(userId)
+
+	if err != nil {
+		context.JSON(
+			http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"urls": urls,
+	})
 }
