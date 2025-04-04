@@ -38,7 +38,7 @@ func (url *Url) GenerateShortUrl() error {
 	url.ShortUrl = internal.GetBase62Encoding(url.Id)
 
 	_, err := db.Insert(
-		db.InsertNewUrl, url.Id, url.ShortUrl, url.LongUrl, url.UserId)
+		db.InsertNewUrl, url.Id, url.LongUrl, url.ShortUrl, url.UserId)
 
 	if err != nil {
 		return errors.New("Unable to create new url.")
@@ -91,17 +91,19 @@ func (url *Url) UpdateUrl(existingShortUrl string) (error) {
 		return errors.New("The Url does not belong to this user")
 	}
 
-	if fetchedUrl.ShortUrl != "" {
-		err := UpdateCustomUrl(fetchedUrl.ShortUrl, fetchedUrl.Id)
+	if url.ShortUrl != "" {
+		err := UpdateCustomUrl(url.ShortUrl, fetchedUrl.Id)
 
 		if err != nil {
 			return errors.New("Unable to update custom url name")
 		}
+	} else {
+		url.ShortUrl = fetchedUrl.ShortUrl
 	}
 
-	if fetchedUrl.LongUrl != "" {
+	if url.LongUrl != "" {
 		_, err := db.Update(
-			db.UpdateUrl, fetchedUrl.LongUrl, fetchedUrl.Id, fetchedUrl.ShortUrl)
+			db.UpdateUrl, url.LongUrl, fetchedUrl.Id, existingShortUrl)
 
 		if err != nil {
 			return errors.New("Unable to update the long url")
