@@ -29,7 +29,7 @@ This project is still in development. The core backend functionality is mostly c
 ## Setup and Usage
 
 1. Clone the repository
-2. Install dependencies: `go mod download.
+2. Install dependencies: `go mod download`.
 3. Configure and set the environment variables, mentions in the `config/config.go file`
 4. Run the application: `go run main.go`
 
