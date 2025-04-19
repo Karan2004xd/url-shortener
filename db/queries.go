@@ -16,7 +16,7 @@ const (
 	`
 
 	InsertNewUrl = `
-	INSERT INTO urls (id, short_url, long_url, user_id)
+	INSERT INTO urls (id, long_url, short_url, user_id)
 	VALUES (?, ?, ?, ?)
 	`
 
